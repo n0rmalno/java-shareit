@@ -81,7 +81,8 @@ public class ItemServiceImpl implements ItemService {
         }
         List<Item> items = itemRepository.getAllItemsByUserId(userId);
         List<ItemDto> itemsDto = items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
-        log.info("Текущее количество вещей пользователя с ид {} составляет: {} шт. Список возвращён.", userId, items.size());
+        log.info("Текущее количество вещей пользователя с ид {} составляет: {} шт. Список возвращён.",
+                userId, items.size());
         return itemsDto;
     }
 
@@ -89,7 +90,8 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getItemsBySearch(String text) {
         List<Item> items = itemRepository.getItemsBySearch(text.toLowerCase());
         List<ItemDto> itemsDto = items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
-        log.info("Текущее количество свободных вещей по запросу \"{}\" составляет: {} шт. Список возвращён.", text, items.size());
+        log.info("Текущее количество свободных вещей по запросу \"{}\" составляет: {} шт. Список возвращён.",
+                text, items.size());
         return itemsDto;
     }
 }
