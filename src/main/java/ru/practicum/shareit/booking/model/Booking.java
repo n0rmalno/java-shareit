@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
  */
 @Data
 public class Booking {
-    public Long id;
-    public final LocalDateTime start;
-    public final LocalDateTime end;
-    public final Item item;
-    public final User booker;
-    public String status;
+    private Long id;
+    private final LocalDateTime start;
+    private final LocalDateTime end;
+    private final Item item;
+    private final User booker;
+    private String status;
 }
