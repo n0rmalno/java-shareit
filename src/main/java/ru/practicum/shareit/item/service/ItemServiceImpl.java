@@ -48,6 +48,9 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getName() != null) {
             item.setName(itemDto.getName());
         }
+        if (itemDto.getName() == null && itemDto.getDescription() == null && itemDto.getAvailable() == null) {
+            throw new IllegalArgumentException("Необходимо указать хотя бы одно поле для обновления.");
+        }
         log.info("Вещь с ID {} обновлена.", itemDto.getId());
         return ItemMapper.toItemDto(item);
     }
