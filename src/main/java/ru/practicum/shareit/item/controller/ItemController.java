@@ -4,9 +4,12 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemGetResponseDto;
 import ru.practicum.shareit.item.service.ItemService;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,19 +36,29 @@ public class ItemController {
         return itemService.updateItem(userId, itemDto);
     }
 
-
     @GetMapping("/{id}")
-    public ItemDto getItemById(@PathVariable @Positive long id) {
-        return itemService.getItemById(id);
+    public ItemGetResponseDto getItemById(@RequestHeader("X-Sharer-User-Id") long userId,
+                                          @PathVariable @Positive long id) {
+        return itemService.getItemById(userId, id);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemGetResponseDto> getAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.getAllItemsByUserId(userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> getItemsBySearch(@RequestParam String text) {
+        if (text == null || text.isBlank()) {
+            return Collections.emptyList();
+        }
         return itemService.getItemsBySearch(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                    @PathVariable @Positive long itemId,
+                                    @RequestBody CommentDto commentDto) {
+        return itemService.addComment(userId, itemId, commentDto);
     }
 }
