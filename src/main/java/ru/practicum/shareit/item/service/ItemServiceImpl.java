@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -155,6 +155,13 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapper.toCommentDto(savedComment);
     }
 
+    private void isUserBooker(long userId, long itemId, List<Booking> bookings) {
+        if (bookings.isEmpty()) {
+            throw new NotValidException(String.format("Пользователь с ИД %d не может оставлять комментарии к веши с ИД %d.",
+                    userId, itemId));
+        }
+    }
+
     private void addBookingResponseDto(ItemGetResponseDto itemGetResponseDto, List<Booking> bookings) {
         Optional<Booking> nextBooking = bookings.stream()
                 .filter(booking -> booking.getStart().isAfter(LocalDateTime.now())
@@ -200,13 +207,6 @@ public class ItemServiceImpl implements ItemService {
         if (optionalItem.isEmpty()) {
             log.error("Вещь с ИД {} отсутствует в БД.", itemId);
             throw new NotFoundException(String.format("Вещь с ИД %d отсутствует в БД.", itemId));
-        }
-    }
-
-    private void isUserBooker(long userId, long itemId, List<Booking> bookings) {
-        if (bookings.isEmpty()) {
-            throw new NotValidException(String.format("Пользователь с ИД %d не может оставлять комментарии к веши с ИД %d.",
-                    userId, itemId));
         }
     }
 }

@@ -1,16 +1,16 @@
 package ru.practicum.shareit.user.service;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exeption.EmailAlreadyExistsException;
 import ru.practicum.shareit.exeption.NotFoundException;
-import ru.practicum.shareit.exeption.NotValidException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,8 +24,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto addUser(UserDto userDto) {
-        isUserHaveEmail(userDto);
+        if (isUserHaveEmail(userDto.getEmail())) {
+            throw new EmailAlreadyExistsException("Пользователь с email " + userDto.getEmail() + " уже существует.");
+        }
+
         User user = UserMapper.toUser(userDto);
+
         user = userRepository.save(user);
         userDto.setId(user.getId());
         log.info("Добавлен новый пользователь с ID = {}", user.getId());
@@ -35,6 +39,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto updateUser(UserDto userDto) {
+        if (isUserHaveEmail(userDto.getEmail())) {
+            throw new EmailAlreadyExistsException("Пользователь с email " + userDto.getEmail() + " уже существует.");
+        }
         Optional<User> optionalUser = userRepository.findById(userDto.getId());
         isUserPresent(optionalUser, userDto.getId());
         User oldUser = optionalUser.orElseThrow();
@@ -80,10 +87,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void isUserHaveEmail(UserDto userDto) {
-        if (userDto.getEmail() == null) {
-            log.error("У пользователя отсутствует Email");
-            throw new NotValidException("У пользователя отсутствует Email");
-        }
+    private boolean isUserHaveEmail(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 }

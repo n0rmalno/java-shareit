@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.controller;
 
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +8,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemGetResponseDto;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.validation.constraints.Positive;
 import java.util.Collections;
 import java.util.List;
 
