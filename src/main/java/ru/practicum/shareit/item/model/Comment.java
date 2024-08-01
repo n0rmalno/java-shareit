@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.model;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
